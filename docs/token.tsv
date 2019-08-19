@@ -23,8 +23,6 @@ Cod	Símbolo
 22	Or
 23	And
 24	Not
-25	Identificador
-26	Inteiro
 27	For
 28	To
 29	Case
@@ -46,7 +44,6 @@ Cod	Símbolo
 45	<>
 46	,
 47	;
-48	literal
 49	.
 50	..
 51	$
