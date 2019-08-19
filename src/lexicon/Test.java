@@ -18,7 +18,13 @@ public class Test {
 		System.out.println(stk.size());
 		while(!stk.empty()) {
 			Token aux = stk.pop();
-			System.out.println(stk.pop().toString());
+			if(aux != null) {
+				System.out.println(aux.toString());
+			}
+			else {
+				System.out.println("PORRA MERDA");
+			}
+			
 		}
 		
 		

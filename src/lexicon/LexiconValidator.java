@@ -55,7 +55,7 @@ public class LexiconValidator {
 					symbol = "";
 				}
 				
-				System.out.println(symbol);
+				
 			}
 			
 			if(lineNumber + 1== lines.size() && symbol != "") {
@@ -69,7 +69,7 @@ public class LexiconValidator {
 	}
 	
 	private Token generateToken(String symbol, List<Token> possibleTokens, Integer lineNumber) {
-		
+		System.out.println(symbol);
 		for(Token possibleToken : possibleTokens) {
 			if((symbol.toUpperCase()).equals((possibleToken.getSymbol()).toUpperCase())) {
 				return new Token(possibleToken.getIndex(), symbol, lineNumber);
