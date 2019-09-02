@@ -18,13 +18,12 @@ public class Test {
 		List<String> lines = new ArrayList<String>();
 		
 		
-		Path text_path = Paths.get("/tmp", "test.txt");
+		Path text_path = Paths.get("tests", "test.txt");
 		try {
 			List<String> FullText = Files.readAllLines(text_path);
 			
 			Stack<String> stack = new Stack();
 		
-			
 			for (String line : FullText) {
 				
 				stack.push(line);
