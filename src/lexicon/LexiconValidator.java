@@ -125,9 +125,25 @@ public class LexiconValidator {
 					symbol += charac.toString();
 					
 					Token auxToken = generateToken(null, symbol, possibleTokens, lineNumber);
+					
 					if(auxToken != null) {
-						tokens.add(auxToken);
-						symbol = "";
+						
+						// Verifica se esse acumulado mais o próximo elemento tambem é um token
+						if(line.length() > i + 1) {
+							symbol += line.charAt(i + 1);
+							Token auxToken2 = generateToken(null, symbol, possibleTokens, lineNumber);
+							if(auxToken2 != null) {
+								tokens.add(auxToken2);
+							}
+							else {
+								tokens.add(auxToken);
+							}
+							
+						}
+						else {
+							tokens.add(auxToken);
+						}
+						
 					}
 					
 				}
@@ -147,6 +163,7 @@ public class LexiconValidator {
 			return null;
 		}
 		
+		//TODO validar tamanhos
 		if(type == "literal") {
 			return new Token(48, symbol, lineNumber);
 		}
