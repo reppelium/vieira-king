@@ -16,16 +16,23 @@ public class LexiconValidator {
 		Stack<Token> tokens = new Stack<Token>();
 		
 		List<Token> possibleTokens = getPossibleTokens();
-
+		
+		Boolean comments = false;
+		Boolean literal = false;
+		
 		for(Integer lineNumber = 0; lineNumber < lines.size();lineNumber++) {
 			String line = lines.get(lineNumber);
-			Boolean comments = false;
-			Boolean literal = false;
+			
 			String symbol = "";
 			for(Integer i=0;i<line.length();i++) {
 				Character charac = line.charAt(i);
-				
+
+				// Lógica comentarios
 				if(charac == '(' && i<line.length() + 1 && line.charAt(i + 1) == '*') {
+					//Caso exista algum symbulo pré stado
+					if(symbol != "") {
+						System.out.println("Erro, inicio de comentario com empilhagem no symbol.");
+					}
 					comments = true;
 				}
 				else if(charac == ')' && 1 < line.length() && line.charAt(i - 1) == '*') {
@@ -34,98 +41,137 @@ public class LexiconValidator {
 				else if(comments) {
 					
 				}
-				else if(charac != ' ' || literal) {
-					
-					if(literal && charac == '\'' ) {
-						literal = false;
-						tokens.add(new Token(48, symbol, lineNumber + 1));
+				//Lógica Strings
+				else if(charac == '\'' && !literal) {
+					if(symbol != "") {
+						System.out.println("Erro, inicio de literal com empilhagem no symbol.");
+					}
+					literal = true;
+				}
+				else if(charac == '\'' && literal) {
+					literal = false;
+					Token auxToken = generateToken("literal", symbol, possibleTokens, lineNumber);
+					if(auxToken != null) {
+						tokens.add(auxToken);
 						symbol = "";
 					}
-					else if(charac == '\'') {
-						literal = true;
-					}
-					else {
+				}
+				else if(literal) {
+					symbol += charac.toString();
+				}	
+				// Identificadores OU Palavra Reservada
+				else if((charac >= 'a' && charac <= 'z')||(charac >= 'A' && charac <= 'Z')) {
+					
+					Integer j = i;
+					symbol = "";
+					while((charac >= 'a' && charac <= 'z')
+							||(charac >= 'A' && charac <= 'Z')
+							||(charac >= '0' && charac <= '9')) {
 						
 						symbol += charac.toString();
+						j++;
+						if(j == line.length()) {
+							break;
+						}
+						charac = line.charAt(j);
+						
 					}
-				}
-				else {
-					Token auxiliarToken = generateToken(symbol,possibleTokens, lineNumber + 1);
-					tokens.add(auxiliarToken);
+					
+					Token auxToken = generateToken("identificador", symbol, possibleTokens, lineNumber);
+					if(auxToken != null) {
+						tokens.add(auxToken);
+						symbol = "";
+					}
+					
 					symbol = "";
+					i = j - 1;
+				}
+				//Inteiro
+				else if((charac >= '0' && charac <= '9')||
+						(charac ==  '-' && i+1<line.length() && 
+									(line.charAt(i + 1) >= '0' && line.charAt(i + 1) <= '9'))) {
+					Integer j = i;
+					symbol = "";
+					if(charac == '-') {
+						symbol += charac.toString();
+						charac = line.charAt(j);
+						j++;
+					}
+					
+					while(charac >= '0' && charac <= '9') {
+						
+						symbol += charac.toString();
+						j++;
+						if(j == line.length()) {
+							break;
+						}
+						charac = line.charAt(j);
+						
+					}
+					
+					Token auxToken = generateToken("inteiro", symbol, possibleTokens, lineNumber);
+					if(auxToken != null) {
+						tokens.add(auxToken);
+						symbol = "";
+					}
+					
+					symbol = "";
+					i = j - 1;
+					
+				}
+				//Outros Simbolos
+				else if(charac != ' ' && charac != '\t') {
+					
+					symbol += charac.toString();
+					
+					Token auxToken = generateToken(null, symbol, possibleTokens, lineNumber);
+					if(auxToken != null) {
+						tokens.add(auxToken);
+						symbol = "";
+					}
+					
 				}
 				
-				
-			}
 			
-			if(lineNumber + 1== lines.size() && symbol != "") {
-				Token auxiliarToken = generateToken(symbol,possibleTokens, lineNumber + 1);
-				tokens.add(auxiliarToken);
-				symbol = "";
+				
 			}
 			
 		}
 		return tokens;
 	}
 	
-	private Token generateToken(String symbol, List<Token> possibleTokens, Integer lineNumber) {
-		System.out.println(symbol);
+	
+	public Token generateToken(String type,String symbol,List<Token> possibleTokens, Integer lineNumber) {
+		if(symbol == null || symbol == "") {
+			System.out.println("NUll?");
+			return null;
+		}
+		
+		if(type == "literal") {
+			return new Token(48, symbol, lineNumber);
+		}
+		if(type == "inteiro") {
+			return new Token(26, symbol, lineNumber);
+		}
+		
 		for(Token possibleToken : possibleTokens) {
+			System.out.println(lineNumber + "- " + symbol + possibleToken.getSymbol());
 			if((symbol.toUpperCase()).equals((possibleToken.getSymbol()).toUpperCase())) {
+				System.out.println("ACHOU");
 				return new Token(possibleToken.getIndex(), symbol, lineNumber);
 			}
 		}
+
 		
-		// se chegou aqui é porque não é uma palavra reservada, preciso determinar se é string ou integer
-		
-		Integer theInt = 0;
-		Boolean negative = false;
-		Boolean isInt = false;
-		for(int i=0;i<symbol.length();i++) {
-			Character charac = symbol.charAt(i);
-			if (charac == '-') {
-				negative = true;
-				i++;
-			}
-			if(charac >= '0' && charac <= '9') {
-				isInt = true;
-			}
-			else {
-				isInt = false;
-				break;
-			}	
-		}
-		if(isInt) {
-			return new Token(26, symbol, lineNumber);
-		}
-		Boolean isVariable = false;
-		for(int i=0;i<symbol.length();i++) {
-			Character charac = symbol.charAt(i);
-			if(i == 0) {
-				if(charac >= '0' && charac <= '9') {
-					isVariable = false;
-					break;
-				}
-			}
-		
-			if((charac >= '0' && charac <= '9') || 
-					(charac >= 'a' && charac <= 'z')|| 
-					(charac >= 'A' && charac <= 'Z')) {
-				isVariable = true;
-			}
-			else {
-				isVariable = false;
-				break;
-			}
-		}
-		if(isVariable) {
+		if(type == "identificador") {
 			return new Token(25, symbol, lineNumber);
 		}
 		
-		System.out.println("merda - " + symbol + " - line: " + lineNumber);
+		
 		return null;
 	}
-
+	
+	//TODO ENUM
 	public List<Token> getPossibleTokens() {
 		List<Token> possibleTokens = new ArrayList<Token>();
 		//read file
