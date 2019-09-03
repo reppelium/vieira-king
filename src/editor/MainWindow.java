@@ -1,10 +1,20 @@
 package editor;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Stack;
 
 import javax.swing.*;
 
 import javax.swing.table.DefaultTableModel;
+
+import lexicon.LexiconValidator;
+import lexicon.Token;
 
 public class MainWindow {
 
@@ -76,9 +86,6 @@ public class MainWindow {
 		panel.add(scrollPane);
 		
 		
-		
-		
-		
 		JMenuBar menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 		
@@ -87,6 +94,41 @@ public class MainWindow {
 		
 		JMenu mnExecutar = new JMenu("Executar");
 		menuBar.add(mnExecutar);
+		mnExecutar.addActionListener(new AbstractAction() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				System.out.println("TA AQ");
+				
+				String[] FullText = nr.pane.getText().split("\n");
+				
+				List<String> lines = new ArrayList<String>();
+
+				for (String line : FullText) {
+					
+					lines.add(line);
+						
+				}
+				
+				LexiconValidator lv = new LexiconValidator();
+				
+				Stack<Token> stk = lv.validate(lines);
+				System.out.println(stk.size());
+				while(!stk.empty()) {
+					Token aux = stk.pop();
+					if(aux != null) {
+						System.out.println(aux.toString());
+					}
+					else {
+						System.out.println("ERRO");
+					}
+					
+				}
+				
+			}
+		
+		});
 		
 		JMenuItem mntmNovo = new JMenuItem("Novo");
 		mnArquivo.add(mntmNovo);
