@@ -13,26 +13,37 @@ public class Test {
 	public static void main(String[] args) {
 		LexiconValidator lv = new LexiconValidator();
 		
+<<<<<<< HEAD
 		List<String> lines = new ArrayList<String>();
+=======
+		List<Token> st = lv.getPossibleTokens();
+		
+
+>>>>>>> e7722055bb20c0985645f51f8a76b8243202bc6e
 		
 		
 		Path text_path = Paths.get("tests", "test.txt");
 		try {
 			List<String> FullText = Files.readAllLines(text_path);
 			
-			Stack<String> stack = new Stack();
+			List<String> lines = new ArrayList<String>();
 		
 			for (String line : FullText) {
 				
-				stack.push(line);
+				lines.add(line);
 					
 			}
-			
-			Stack allLines = new Stack();
-			allLines = reverse(stack);
-			
-			while(!allLines.empty()) {
-				lines.add((String) allLines.pop());
+			Stack<Token> stk = lv.validate(lines);
+			System.out.println(stk.size());
+			while(!stk.empty()) {
+				Token aux = stk.pop();
+				if(aux != null) {
+					System.out.println(aux.toString());
+				}
+				else {
+					System.out.println("ERRO");
+				}
+				
 			}
 		
 			
@@ -42,6 +53,7 @@ public class Test {
 		
 		
 		
+<<<<<<< HEAD
 		Stack<Token> stk;
 		try {
 			stk = lv.validate(lines);
@@ -60,6 +72,10 @@ public class Test {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
+=======
+	
+		
+>>>>>>> e7722055bb20c0985645f51f8a76b8243202bc6e
 		
 		
 		

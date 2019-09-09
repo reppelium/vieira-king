@@ -1,10 +1,15 @@
-(*TESTE - Exemplo Válido*)
+(*TESTE - Exemplo Válid
+
+
+
+
+o*)
 PROGRAM TESTE123;
 	LABEL
 		label_a, label_b;
 	
 	CONST
-		a = -100;
+		a = -10000;
 		b = -200;
 	VAR 
 		 X, Y, Z : INTEGER;
@@ -26,7 +31,6 @@ PROGRAM TESTE123;
 			array_b : ARRAY[0..1000] OF INTEGER;
 	BEGIN
 		X := a * b;
-
 	END;
 
 (*	
