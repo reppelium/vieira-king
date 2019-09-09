@@ -12,24 +12,21 @@ import java.util.Stack;
 
 public class LexiconValidator {
 	
-	public Stack<Token> validate(List<String> lines) {
+	public Stack<Token> validate(List<String> lines) throws Exception {
 		Stack<Token> tokens = new Stack<Token>();
 		
 		List<Token> possibleTokens = getPossibleTokens();
 		
 		Boolean comments = false;
-		Boolean literal = false;
 		
-		for(Integer lineNumber = 0; lineNumber < lines.size();lineNumber++) {
-			String line = lines.get(lineNumber);
+		for(Integer lineNumber = 1; lineNumber <= lines.size();lineNumber++) {
+			String line = lines.get(lineNumber - 1);
 			
 			String symbol = "";
 			for(Integer i=0;i<line.length();i++) {
 				Character charac = line.charAt(i);
-
 				// Lógica comentarios
 				if(charac == '(' && i<line.length() + 1 && line.charAt(i + 1) == '*') {
-					//Caso exista algum symbulo pré stado
 					if(symbol != "") {
 						System.out.println("Erro, inicio de comentario com empilhagem no symbol.");
 					}
@@ -39,31 +36,46 @@ public class LexiconValidator {
 					comments = false;
 				}
 				else if(comments) {
+					continue;
+				}
+				
+				//Logica Literal
+				else if(charac == '\'') {
+					symbol = "";
+					Integer j = i + 1;
+					charac = line.charAt(j);
 					
-				}
-				//Lógica Strings
-				else if(charac == '\'' && !literal) {
-					if(symbol != "") {
-						System.out.println("Erro, inicio de literal com empilhagem no symbol.");
+					while(charac != '\'') {
+						
+						symbol += charac.toString();
+						j++;
+						if(j == line.length()) {
+							throw new Exception(lineNumber + ": LEXICO - Literal com mais de uma linha.");
+						}
+						charac = line.charAt(j);
+						
 					}
-					literal = true;
-				}
-				else if(charac == '\'' && literal) {
-					literal = false;
+					
+					if(symbol.length() > 255) {
+						throw new Exception(lineNumber + ": LEXICO - Literal com tamanho maior que 255 caracteres.");
+
+					}
+					
 					Token auxToken = generateToken("literal", symbol, possibleTokens, lineNumber);
 					if(auxToken != null) {
 						tokens.add(auxToken);
 						symbol = "";
 					}
-				}
-				else if(literal) {
-					symbol += charac.toString();
+					i = j;
+					continue;
 				}	
-				// Identificadores OU Palavra Reservada
+				// Logica Identificadores OU Palavra Reservada
 				else if((charac >= 'a' && charac <= 'z')||(charac >= 'A' && charac <= 'Z')) {
 					
 					Integer j = i;
-					symbol = "";
+					symbol = charac.toString();
+					j++;
+					charac = line.charAt(j);
 					while((charac >= 'a' && charac <= 'z')
 							||(charac >= 'A' && charac <= 'Z')
 							||(charac >= '0' && charac <= '9')) {
@@ -76,7 +88,10 @@ public class LexiconValidator {
 						charac = line.charAt(j);
 						
 					}
-					
+					if(symbol.length() > 30) {
+						System.out.println("erro linha: " + lineNumber);
+						throw new Exception(lineNumber + ": LEXICO - Identificador com tamanho maior que 30 caracteres.");
+					}
 					Token auxToken = generateToken("identificador", symbol, possibleTokens, lineNumber);
 					if(auxToken != null) {
 						tokens.add(auxToken);
@@ -85,6 +100,7 @@ public class LexiconValidator {
 					
 					symbol = "";
 					i = j - 1;
+					continue;
 				}
 				//Inteiro
 				else if((charac >= '0' && charac <= '9')||
@@ -94,8 +110,8 @@ public class LexiconValidator {
 					symbol = "";
 					if(charac == '-') {
 						symbol += charac.toString();
-						charac = line.charAt(j);
 						j++;
+						charac = line.charAt(j);
 					}
 					
 					while(charac >= '0' && charac <= '9') {
@@ -110,6 +126,12 @@ public class LexiconValidator {
 					}
 					
 					Token auxToken = generateToken("inteiro", symbol, possibleTokens, lineNumber);
+					
+					Integer local_int = Integer.parseInt(symbol);
+					if(local_int > 32767 || local_int < -32767) {
+						throw new Exception(lineNumber + ": LEXICO - Inteiro com tamanho incorreto.");
+					}
+					
 					if(auxToken != null) {
 						tokens.add(auxToken);
 						symbol = "";
@@ -117,7 +139,7 @@ public class LexiconValidator {
 					
 					symbol = "";
 					i = j - 1;
-					
+					continue;
 				}
 				//Outros Simbolos
 				else if(charac != ' ' && charac != '\t') {
@@ -138,17 +160,15 @@ public class LexiconValidator {
 							else {
 								tokens.add(auxToken);
 							}
-							
 						}
 						else {
 							tokens.add(auxToken);
 						}
 						
+						symbol = "";
 					}
 					
 				}
-				
-			
 				
 			}
 			
@@ -157,13 +177,12 @@ public class LexiconValidator {
 	}
 	
 	
-	public Token generateToken(String type,String symbol,List<Token> possibleTokens, Integer lineNumber) {
+	private Token generateToken(String type,String symbol,List<Token> possibleTokens, Integer lineNumber) throws Exception {
 		if(symbol == null || symbol == "") {
 			System.out.println("NUll?");
 			return null;
 		}
 		
-		//TODO validar tamanhos
 		if(type == "literal") {
 			return new Token(48, symbol, lineNumber);
 		}
@@ -172,9 +191,7 @@ public class LexiconValidator {
 		}
 		
 		for(Token possibleToken : possibleTokens) {
-			System.out.println(lineNumber + "- " + symbol + possibleToken.getSymbol());
 			if((symbol.toUpperCase()).equals((possibleToken.getSymbol()).toUpperCase())) {
-				System.out.println("ACHOU");
 				return new Token(possibleToken.getIndex(), symbol, lineNumber);
 			}
 		}
@@ -189,7 +206,7 @@ public class LexiconValidator {
 	}
 	
 	//TODO ENUM
-	public List<Token> getPossibleTokens() {
+	private List<Token> getPossibleTokens() {
 		List<Token> possibleTokens = new ArrayList<Token>();
 		//read file
 		String path = "docs/token.tsv";

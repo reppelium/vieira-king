@@ -13,8 +13,6 @@ public class Test {
 	public static void main(String[] args) {
 		LexiconValidator lv = new LexiconValidator();
 		
-		List<Token> st = lv.getPossibleTokens();
-		
 		List<String> lines = new ArrayList<String>();
 		
 		
@@ -44,18 +42,25 @@ public class Test {
 		
 		
 		
-		Stack<Token> stk = lv.validate(lines);
-		System.out.println(stk.size());
-		while(!stk.empty()) {
-			Token aux = stk.pop();
-			if(aux != null) {
-				System.out.println(aux.toString());
+		Stack<Token> stk;
+		try {
+			stk = lv.validate(lines);
+			System.out.println(stk.size());
+			while(!stk.empty()) {
+				Token aux = stk.pop();
+				if(aux != null) {
+					System.out.println(aux.toString());
+				}
+				else {
+					System.out.println("ERRO");
+				}
+				
 			}
-			else {
-				System.out.println("PORRA MERDA");
-			}
-			
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println(e.getMessage());
 		}
+		
 		
 		
 	}
