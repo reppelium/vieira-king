@@ -21,6 +21,7 @@ public class MainWindow {
 	private JFrame frame;
 	private JTable table;
 	private JTable table_1;
+	private Stack<Token> genereted_tokens;
 	/**
 	 * Launch the application.
 	 */
@@ -113,17 +114,12 @@ public class MainWindow {
 				
 				LexiconValidator lv = new LexiconValidator();
 				
-				Stack<Token> stk = lv.validate(lines);
-				System.out.println(stk.size());
-				while(!stk.empty()) {
-					Token aux = stk.pop();
-					if(aux != null) {
-						System.out.println(aux.toString());
-					}
-					else {
-						System.out.println("ERRO");
-					}
-					
+				
+				try {
+					genereted_tokens = lv.validate(lines);
+					System.out.println("Processo Lexico realizado com sucesso\nTotal de " + genereted_tokens.size() + " tokens.");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
 				}
 				
 			}
