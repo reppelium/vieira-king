@@ -1,6 +1,7 @@
 package editor;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -9,7 +10,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 
 public class LineNr extends JPanel {
@@ -23,7 +33,7 @@ public class LineNr extends JPanel {
 		setMinimumSize(new Dimension(10, 10));
 		setPreferredSize(new Dimension(30, 30));
 		setMaximumSize(new Dimension(30, 30));
-
+	
 		pane = new JTextPane() 
 		{
 			public void paint(Graphics g) {
@@ -55,5 +65,25 @@ public class LineNr extends JPanel {
 		}
 
 	}
+	
+	private int findLastNonWordChar (String text, int index) {
+        while (--index >= 0) {
+            if (String.valueOf(text.charAt(index)).matches("\\W")) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private int findFirstNonWordChar (String text, int index) {
+        while (index < text.length()) {
+            if (String.valueOf(text.charAt(index)).matches("\\W")) {
+                break;
+            }
+            index++;
+        }
+        return index;
+    }
+
 
 }

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -50,10 +51,12 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 450, 300);
+		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("/home/romulo/Downloads/icons8-java-eclipse-64.png"));
+		frame.setTitle("Vieira King Compilador 1.0");
+		frame.setBounds(100, 100, 842, 807);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(new BorderLayout());
-		
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		
 		final LineNr nr = new LineNr();
 
@@ -63,45 +66,104 @@ public class MainWindow {
 		frame.getContentPane().add(nr, BorderLayout.WEST);
 
 		JPanel panel_2 = new JPanel();
-		panel_2.setBackground(Color.RED);
+		panel_2.setBackground(Color.LIGHT_GRAY);
 		frame.getContentPane().add(panel_2, BorderLayout.SOUTH);
 		
+		JTextPane textPane = new JTextPane();
+		textPane.setPreferredSize(new Dimension(1600, 200));
+		textPane.setMinimumSize(new Dimension(700, 50));
+	
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setMinimumSize(new Dimension(400, 400));
+		
+		tabbedPane.addTab("Console", textPane);
+		panel_2.add(tabbedPane);
+		
 		JPanel panel = new JPanel();
+		panel.setVisible(false);
 		frame.getContentPane().add(panel, BorderLayout.EAST);
 		
 		table_1 = new JTable();
 		table_1.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
-				{null, null},
+				
 			},
 			new String[] {
-				"Id", "Token"
+				"Line","Index", "Symbol"
 			}
-		));
-		
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		table_1.getColumnModel().getColumn(0).setResizable(false);
+		table_1.getColumnModel().getColumn(1).setResizable(false);
+		table_1.getColumnModel().getColumn(2).setResizable(false);
+
 		JScrollPane scrollPane = new JScrollPane(table_1);
 		panel.add(scrollPane);
 		
+		JToolBar toolBar = new JToolBar();
+		toolBar.setFloatable(false);
+		toolBar.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+		frame.getContentPane().add(toolBar, BorderLayout.NORTH);
 		
-		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
-		
-		JMenu mnArquivo = new JMenu("Arquivo");
-		menuBar.add(mnArquivo);
-		
-		JMenu mnExecutar = new JMenu("Executar");
-		menuBar.add(mnExecutar);
-		mnExecutar.addActionListener(new AbstractAction() {
+		JButton btnNovo = new JButton("Novo");
+		btnNovo.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				// TODO Auto-generated method stub
-				System.out.println("TA AQ");
+			
+				panel.setVisible(false);
+				nr.pane.setText("");
 				
+			}
+		});
+		toolBar.add(btnNovo);
+		
+		
+		JButton btnSave = new JButton("Salvar");
+		btnSave.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				nr.pane.getText();
+				
+				
+			}
+			
+		});
+		toolBar.add(btnSave);
+		
+		
+		JButton btnExecute = new JButton("Executar");
+		btnExecute.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				
+				table_1.setModel(new DefaultTableModel(
+						new Object[][] {
+							
+						},
+						new String[] {
+							"Line","Index", "Symbol"
+						}
+					) {
+						boolean[] columnEditables = new boolean[] {
+							false, false, false
+						};
+						public boolean isCellEditable(int row, int column) {
+							return columnEditables[column];
+						}
+					});
+				
+				// TODO Auto-generated method stub
+				panel.setVisible(true);
 				String[] FullText = nr.pane.getText().split("\n");
 				
 				List<String> lines = new ArrayList<String>();
@@ -112,30 +174,43 @@ public class MainWindow {
 						
 				}
 				
+				
+				
 				LexiconValidator lv = new LexiconValidator();
 				
 				
 				try {
+					
 					genereted_tokens = lv.validate(lines);
+					Stack<Token> aux_stack = reverse(genereted_tokens);
+					DefaultTableModel model = (DefaultTableModel) table_1.getModel();
+					while(!aux_stack.empty()) {
+						Token aux = aux_stack.pop();
+						if(aux != null) {
+				
+							model.addRow(new Object[]{aux.getLine(), aux.getIndex(), aux.getSymbol()});
+						}
+						else {
+							System.out.println("ERRO");
+						}
+					}
 					System.out.println("Processo Lexico realizado com sucesso\nTotal de " + genereted_tokens.size() + " tokens.");
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
+	
 				}
-				
 			}
-		
 		});
+		toolBar.add(btnExecute);
 		
-		JMenuItem mntmNovo = new JMenuItem("Novo");
-		mnArquivo.add(mntmNovo);
 		
-		JMenuItem mntmAbrir = new JMenuItem("Abrir");
-		mnArquivo.add(mntmAbrir);
-		
-		JMenuItem mntmSalvar = new JMenuItem("Salvar");
-		mnArquivo.add(mntmSalvar);
-		
-		JMenuItem mntmSair = new JMenuItem("Sair");
-		mnArquivo.add(mntmSair);
+	}
+	
+	public static Stack reverse(Stack<Token> stack){
+		Stack<Token> newStack = new Stack();
+		while(!stack.empty()) {
+			newStack.push( stack.pop());
+		}
+		return newStack;
 	}
 }
