@@ -9,13 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import enums.Tokens;
+
 
 public class LexiconValidator {
 	
 	public Stack<Token> validate(List<String> lines) throws Exception {
 		Stack<Token> tokens = new Stack<Token>();
 		
-		List<Token> possibleTokens = getPossibleTokens();
+		Tokens enum_tokens = new Tokens();
+		
+		List<Token> possibleTokens = enum_tokens.getPossibleTokens();
 		
 		Boolean comments = false;
 		
@@ -201,34 +205,6 @@ public class LexiconValidator {
 			return new Token(25, symbol, lineNumber);
 		}
 		
-		
-		return null;
-	}
-	
-	//TODO ENUM
-	private List<Token> getPossibleTokens() {
-		List<Token> possibleTokens = new ArrayList<Token>();
-		//read file
-		String path = "docs/token.tsv";
-		File file = new File(path);
-		
-		BufferedReader br;
-		try {
-			br = new BufferedReader(new FileReader(file));
-			String line;
-			line = br.readLine();
-			while ((line = br.readLine()) != null) {
-				String[] splitedToken = line.split("	");
-				
-				Token token = new Token(Integer.parseInt(splitedToken[0]),splitedToken[1],null);
-				possibleTokens.add(token);
-			}
-			br.close();
-			return possibleTokens;
-		} catch (IOException e) {
-			System.out.println("Erro no getPossibleToken()");
-			e.printStackTrace();
-		}
 		
 		return null;
 	}
