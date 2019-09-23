@@ -1,4 +1,4 @@
-package Syntactic;
+package syntactic;
 
 public class Test {
 

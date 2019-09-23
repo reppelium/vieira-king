@@ -10,11 +10,12 @@ import java.util.List;
 import java.util.Stack;
 
 import enums.Tokens;
+import errors.EditorException;
 
 
 public class LexiconValidator {
 	
-	public Stack<Token> validate(List<String> lines) throws Exception {
+	public Stack<Token> validate(List<String> lines) throws EditorException {
 		Stack<Token> tokens = new Stack<Token>();
 		
 		Tokens enum_tokens = new Tokens();
@@ -54,14 +55,14 @@ public class LexiconValidator {
 						symbol += charac.toString();
 						j++;
 						if(j == line.length()) {
-							throw new Exception(lineNumber + ": LEXICO - Literal com mais de uma linha.");
+							throw new EditorException(lineNumber, lineNumber + ": LEXICO - Literal com mais de uma linha.");
 						}
 						charac = line.charAt(j);
 						
 					}
 					
 					if(symbol.length() > 255) {
-						throw new Exception(lineNumber + ": LEXICO - Literal com tamanho maior que 255 caracteres.");
+						throw new EditorException(lineNumber, lineNumber + ": LEXICO - Literal com tamanho maior que 255 caracteres.");
 
 					}
 					
@@ -94,7 +95,7 @@ public class LexiconValidator {
 					}
 					if(symbol.length() > 30) {
 						System.out.println("erro linha: " + lineNumber);
-						throw new Exception(lineNumber + ": LEXICO - Identificador com tamanho maior que 30 caracteres.");
+						throw new EditorException(lineNumber, lineNumber + ": LEXICO - Identificador com tamanho maior que 30 caracteres.");
 					}
 					Token auxToken = generateToken("identificador", symbol, possibleTokens, lineNumber);
 					if(auxToken != null) {
@@ -133,7 +134,7 @@ public class LexiconValidator {
 					
 					Integer local_int = Integer.parseInt(symbol);
 					if(local_int > 32767 || local_int < -32767) {
-						throw new Exception(lineNumber + ": LEXICO - Inteiro com tamanho incorreto.");
+						throw new EditorException(lineNumber, lineNumber + ": LEXICO - Inteiro com tamanho incorreto.");
 					}
 					
 					if(auxToken != null) {
@@ -181,7 +182,7 @@ public class LexiconValidator {
 	}
 	
 	
-	private Token generateToken(String type,String symbol,List<Token> possibleTokens, Integer lineNumber) throws Exception {
+	private Token generateToken(String type,String symbol,List<Token> possibleTokens, Integer lineNumber) throws EditorException {
 		if(symbol == null || symbol == "") {
 			System.out.println("NUll?");
 			return null;

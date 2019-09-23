@@ -3,7 +3,7 @@ package enums;
 import java.util.ArrayList;
 import java.util.List;
 
-import Syntactic.Terminal;
+import syntactic.Terminal;
 
 public class NoTerminal {
 	public List<Terminal> getPossibleNoTerminals() {
