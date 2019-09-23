@@ -182,22 +182,34 @@ public class MainWindow {
 				try {
 					
 					genereted_tokens = lv.validate(lines);
-					Stack<Token> aux_stack = reverse(genereted_tokens);
+					Stack<Token> aux_stack = new Stack<Token>();
+					Stack<Token> saved_stack = new Stack<Token>();
+					
+					while(!genereted_tokens.empty()) {
+						Token t = genereted_tokens.pop();
+						aux_stack.add(t);
+						saved_stack.add(t);
+					}
+					
 					DefaultTableModel model = (DefaultTableModel) table_1.getModel();
+					textPane.setText("Processo Lexico realizado com sucesso\nTotal de " + aux_stack.size() + " tokens.");
+					textPane.setForeground(Color.blue);
+					Font font = new Font("Serif", Font.BOLD, 20);
+					textPane.setFont(font);
 					while(!aux_stack.empty()) {
 						Token aux = aux_stack.pop();
 						if(aux != null) {
-				
+						
 							model.addRow(new Object[]{aux.getLine(), aux.getIndex(), aux.getSymbol()});
 						}
 						else {
 							System.out.println("ERRO");
 						}
-					}
-					System.out.println("Processo Lexico realizado com sucesso\nTotal de " + genereted_tokens.size() + " tokens.");
+					}	
+										
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
-	
+					
 				}
 			}
 		});
