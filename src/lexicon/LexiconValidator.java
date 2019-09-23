@@ -48,21 +48,27 @@ public class LexiconValidator {
 				else if(charac == '\'') {
 					symbol = "";
 					Integer j = i + 1;
-					charac = line.charAt(j);
-					
-					while(charac != '\'') {
-						
-						symbol += charac.toString();
-						j++;
-						if(j == line.length()) {
-							throw new EditorException(lineNumber, lineNumber + ": LEXICO - Literal com mais de uma linha.");
-						}
+					if(j < line.length()) {
 						charac = line.charAt(j);
 						
+						while(charac != '\'') {
+							
+							symbol += charac.toString();
+							j++;
+							if(j == line.length()) {
+								throw new EditorException("Lexico", lineNumber, lineNumber + "Literal não foi fechado na linha de abertura.");
+							}
+							charac = line.charAt(j);
+							
+						}
+					}
+					else {
+						throw new EditorException("Lexico", lineNumber, lineNumber + "Literal não foi fechado na linha de abertura.");
 					}
 					
+					
 					if(symbol.length() > 255) {
-						throw new EditorException(lineNumber, lineNumber + ": LEXICO - Literal com tamanho maior que 255 caracteres.");
+						throw new EditorException("Lexico", lineNumber, lineNumber + "Literal com tamanho maior que 255 caracteres.");
 
 					}
 					
@@ -94,7 +100,7 @@ public class LexiconValidator {
 					}
 					if(symbol.length() > 30) {
 						System.out.println("erro linha: " + lineNumber);
-						throw new EditorException(lineNumber, lineNumber + ": LEXICO - Identificador com tamanho maior que 30 caracteres.");
+						throw new EditorException("Lexico", lineNumber, lineNumber + "Identificador com tamanho maior que 30 caracteres.");
 					}
 					Token auxToken = generateToken("identificador", symbol, possibleTokens, lineNumber);
 					if(auxToken != null) {
@@ -120,7 +126,6 @@ public class LexiconValidator {
 					if(j < line.length() - 1) {
 						charac = line.charAt(j);
 					}
-					charac = line.charAt(j);
 					while(charac >= '0' && charac <= '9') {
 						
 						symbol += charac.toString();
@@ -136,7 +141,7 @@ public class LexiconValidator {
 					
 					Integer local_int = Integer.parseInt(symbol);
 					if(local_int > 32767 || local_int < -32767) {
-						throw new EditorException(lineNumber, lineNumber + ": LEXICO - Inteiro com tamanho incorreto.");
+						throw new EditorException("Lexico", lineNumber, lineNumber + "Inteiro com tamanho incorreto.");
 					}
 					
 					if(auxToken != null) {
