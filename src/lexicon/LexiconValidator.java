@@ -78,9 +78,8 @@ public class LexiconValidator {
 				else if((charac >= 'a' && charac <= 'z')||(charac >= 'A' && charac <= 'Z')) {
 					
 					Integer j = i;
-					symbol = charac.toString();
-					j++;
-					charac = line.charAt(j);
+					symbol = "";
+					
 					while((charac >= 'a' && charac <= 'z')
 							||(charac >= 'A' && charac <= 'Z')
 							||(charac >= '0' && charac <= '9')) {
@@ -116,9 +115,12 @@ public class LexiconValidator {
 					if(charac == '-') {
 						symbol += charac.toString();
 						j++;
+						
+					}
+					if(j < line.length() - 1) {
 						charac = line.charAt(j);
 					}
-					
+					charac = line.charAt(j);
 					while(charac >= '0' && charac <= '9') {
 						
 						symbol += charac.toString();
