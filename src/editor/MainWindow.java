@@ -3,8 +3,13 @@ package editor;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +19,7 @@ import javax.swing.*;
 
 import javax.swing.table.DefaultTableModel;
 
+import errors.EditorException;
 import lexicon.LexiconValidator;
 import lexicon.Token;
 
@@ -51,7 +57,6 @@ public class MainWindow {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setIconImage(Toolkit.getDefaultToolkit().getImage("/home/romulo/Downloads/icons8-java-eclipse-64.png"));
 		frame.setTitle("Vieira King Compilador 1.0");
 		frame.setBounds(100, 100, 842, 807);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -66,19 +71,27 @@ public class MainWindow {
 		frame.getContentPane().add(nr, BorderLayout.WEST);
 
 		JPanel panel_2 = new JPanel();
-		panel_2.setBackground(Color.LIGHT_GRAY);
+		panel_2.setLayout(new BorderLayout());
+		
 		frame.getContentPane().add(panel_2, BorderLayout.SOUTH);
 		
+		
 		JTextPane textPane = new JTextPane();
-		textPane.setPreferredSize(new Dimension(1600, 200));
-		textPane.setMinimumSize(new Dimension(700, 50));
-	
+
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+		int width = screenSize.width * 18 / 20;
+		panel_2.setLayout(new BorderLayout(0, 0));
+
+		// set the jframe height and width
+		textPane.setPreferredSize(new Dimension(width, 200));
+		
+		
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setMinimumSize(new Dimension(400, 400));
-		
 		tabbedPane.addTab("Console", textPane);
-		panel_2.add(tabbedPane);
+		panel_2.add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel panel = new JPanel();
 		panel.setVisible(false);
@@ -117,14 +130,35 @@ public class MainWindow {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-			
+				
 				panel.setVisible(false);
 				nr.pane.setText("");
+				textPane.setText("");
 				
 			}
 		});
 		toolBar.add(btnNovo);
-		
+	
+		JButton btnOpen = new JButton("Abrir");
+		btnOpen.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Path filePath = selectFile(); 
+				
+				try {
+					String fileText = getTextByFile(filePath);
+					nr.pane.setText(fileText);
+					
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+			
+		});
+		toolBar.add(btnOpen);
 		
 		JButton btnSave = new JButton("Salvar");
 		btnSave.addActionListener(new ActionListener() {
@@ -132,7 +166,7 @@ public class MainWindow {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				nr.pane.getText();
-				
+				saveFile(nr.pane.getText());
 				
 			}
 			
@@ -174,8 +208,6 @@ public class MainWindow {
 						
 				}
 				
-				
-				
 				LexiconValidator lv = new LexiconValidator();
 				
 				
@@ -207,9 +239,12 @@ public class MainWindow {
 						}
 					}	
 										
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-					
+				} catch (EditorException e) {
+					e.getLineNumber();
+					textPane.setText(e.getMessage());
+					textPane.setForeground(Color.red);
+					Font font = new Font("Serif", Font.BOLD, 20);
+					textPane.setFont(font);
 				}
 			}
 		});
@@ -224,5 +259,44 @@ public class MainWindow {
 			newStack.push( stack.pop());
 		}
 		return newStack;
+	}
+	
+	public void saveFile(String fileText) {
+		JFileChooser chooser = new JFileChooser();
+		 if (chooser.showSaveDialog(this.frame) == JFileChooser.APPROVE_OPTION) {
+          File file = chooser.getSelectedFile();
+          String path = file.getPath();
+    
+          try (PrintWriter out = new PrintWriter(path)) {
+  		    out.println(fileText);
+  		  } catch (FileNotFoundException e) {
+  			// TODO Auto-generated catch block
+  			e.printStackTrace();
+  		  }
+        }
+	}
+	
+	public Path selectFile() {
+        JFileChooser chooser = new JFileChooser();
+
+
+        if (chooser.showOpenDialog(this.frame) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            file.toPath();
+            
+            return file.toPath();
+        }else {
+        	return null;
+        }
+		
+        
+        
+    }
+	
+	public String getTextByFile(Path path) throws IOException {
+		
+		String fileText = new String(Files.readAllBytes(path)); 
+		
+		return fileText;
 	}
 }

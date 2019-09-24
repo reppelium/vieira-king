@@ -7,12 +7,13 @@ public class EditorException extends Exception {
 	private String type;
 	
 	public EditorException(String type, Integer lineNumber, String errorMessage) {
+		this.type = type;
 		this.errorMessage = errorMessage;
 		this.lineNumber = lineNumber;
 	}
 
 	public String getMessage() {
-		return lineNumber.toString() + ": " + type + errorMessage;
+		return lineNumber.toString() + ": " + type +" - "+ errorMessage;
 	}
 
 	public Integer getLineNumber() {
