@@ -11,6 +11,7 @@ import java.util.Stack;
 
 import enums.Tokens;
 import errors.EditorException;
+import model.Token;
 
 
 public class LexiconValidator {
@@ -184,6 +185,9 @@ public class LexiconValidator {
 				
 			}
 			
+		}
+		if(comments) {
+			throw new EditorException("Lexico", lines.size(), "Comentario não foram fechados.");
 		}
 		return tokens;
 	}

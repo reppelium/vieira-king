@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import model.Token;
+
 public class Test {
 
 	public static void main(String[] args) {

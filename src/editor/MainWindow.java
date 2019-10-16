@@ -21,7 +21,7 @@ import javax.swing.table.DefaultTableModel;
 
 import errors.EditorException;
 import lexicon.LexiconValidator;
-import lexicon.Token;
+import model.Token;
 
 public class MainWindow {
 

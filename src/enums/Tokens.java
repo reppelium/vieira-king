@@ -3,7 +3,7 @@ package enums;
 import java.util.ArrayList;
 import java.util.List;
 
-import lexicon.Token;
+import model.Token;
 
 public class Tokens {
 	
