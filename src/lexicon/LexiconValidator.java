@@ -89,7 +89,8 @@ public class LexiconValidator {
 					
 					while((charac >= 'a' && charac <= 'z')
 							||(charac >= 'A' && charac <= 'Z')
-							||(charac >= '0' && charac <= '9')) {
+							||(charac >= '0' && charac <= '9')
+							||(charac == '_')) {
 						
 						symbol += charac.toString();
 						j++;
@@ -169,6 +170,7 @@ public class LexiconValidator {
 							Token auxToken2 = generateToken(null, symbol, possibleTokens, lineNumber);
 							if(auxToken2 != null) {
 								tokens.add(auxToken2);
+								i++;
 							}
 							else {
 								tokens.add(auxToken);

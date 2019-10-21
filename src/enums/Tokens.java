@@ -34,6 +34,8 @@ public class Tokens {
 		possibleTokens.add(new Token(22,"Or",null));
 		possibleTokens.add(new Token(23,"And",null));
 		possibleTokens.add(new Token(24,"Not",null));
+		possibleTokens.add(new Token(25,"Identificador",null));
+		possibleTokens.add(new Token(26,"Inteiro",null));
 		possibleTokens.add(new Token(27,"For",null));
 		possibleTokens.add(new Token(28,"To",null));
 		possibleTokens.add(new Token(29,"Case",null));
@@ -55,6 +57,7 @@ public class Tokens {
 		possibleTokens.add(new Token(45,"<>",null));
 		possibleTokens.add(new Token(46,",",null));
 		possibleTokens.add(new Token(47,";",null));
+		possibleTokens.add(new Token(48,"Literal",null));
 		possibleTokens.add(new Token(49,".",null));
 		possibleTokens.add(new Token(50,"..",null));
 		possibleTokens.add(new Token(51,"$",null));

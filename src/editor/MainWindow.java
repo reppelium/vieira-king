@@ -231,7 +231,7 @@ public class MainWindow {
 					while(!aux_stack.empty()) {
 						Token aux = aux_stack.pop();
 						if(aux != null) {
-						
+							System.out.println("st.add(new Token("+aux.getIndex()+", \""+aux.getSymbol()+"\", "+aux.getLine()+"));");
 							model.addRow(new Object[]{aux.getLine(), aux.getIndex(), aux.getSymbol()});
 						}
 						else {

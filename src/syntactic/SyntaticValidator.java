@@ -49,20 +49,23 @@ public class SyntaticValidator {
 		System.out.println("NEXT->" + nextInput.getIndex() + "-" + nextInput.getSymbol());
 		
 		if(isTerminal(top) || top.getSymbol().equals("$")) {
-			if(top.getSymbol() == nextInput.getSymbol()) {
+			if(top.getIndex() == nextInput.getIndex()) {
 				terminals.pop();
 				tokens.pop();
 			}
 			else {
-				throw new EditorException("Syntatic", nextInput.getLine(), "TODO mensagem de erro");
+				throw new EditorException("Syntatic", nextInput.getLine(), "Os index nao sao iguais.");
 			}
 		}
 		else {
 			List<String> result = foundUnion(nextInput, top);
 			terminals.pop();
 			
-			for (String res : result) {
-				terminals.add(generateToken(res));
+			for (Integer i=result.size() - 1;i>=0;i--) {
+				if(!result.get(i).equals("NULL")) {
+					terminals.add(generateToken(result.get(i)));
+				}
+				
 			}
 			
 		}
