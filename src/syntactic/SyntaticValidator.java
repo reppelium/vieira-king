@@ -118,11 +118,30 @@ public class SyntaticValidator {
 	}
 
 	public Stack<Token> getTokens() {
-		return tokens;
+		Stack<Token> ans = new Stack<Token>();
+		for(Integer i=0;i<tokens.size();i++) {
+			ans.add(tokens.get(i));
+		}
+		return ans;
 	}
 
 	public Stack<Token> getTerminals() {
-		return terminals;
+		Stack<Token> ans = new Stack<Token>();
+		for(Integer i=0;i<terminals.size();i++) {
+			ans.add(terminals.get(i));
+		}
+		return ans;
+	}
+	
+	
+	public void setTokens(Stack<Token> tokens) {
+		this.end = false;
+		this.tokens = tokens;
+	}
+
+	public void setTerminals(Stack<Token> terminals) {
+		this.end = false;
+		this.terminals = terminals;
 	}
 
 	public Boolean getEnd() {
