@@ -45,8 +45,8 @@ public class SyntaticValidator {
 		// a
 		Token nextInput = tokens.peek();
 		System.out.println("Iteration");
-		System.out.println("TOP->" + top.getIndex() + "-" + top.getSymbol());
-		System.out.println("NEXT->" + nextInput.getIndex() + "-" + nextInput.getSymbol());
+		System.out.println("TOP->" + top.getIndex() + " - " + top.getSymbol());
+		System.out.println("NEXT->" + nextInput.getIndex() + " - " + nextInput.getSymbol());
 		
 		if(isTerminal(top) || top.getSymbol().equals("$")) {
 			if(top.getIndex() == nextInput.getIndex()) {
@@ -119,6 +119,8 @@ public class SyntaticValidator {
 
 	public Stack<Token> getTokens() {
 		Stack<Token> ans = new Stack<Token>();
+		//isso aqui ta certo assim ou eu devo fazer ao contrario?
+		
 		for(Integer i=0;i<tokens.size();i++) {
 			ans.add(tokens.get(i));
 		}
