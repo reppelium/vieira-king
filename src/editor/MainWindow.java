@@ -22,12 +22,14 @@ import javax.swing.table.DefaultTableModel;
 import errors.EditorException;
 import lexicon.LexiconValidator;
 import model.Token;
+import syntactic.SyntaticValidator;
 
 public class MainWindow {
 
 	private JFrame frame;
 	private JTable table;
 	private JTable table_1;
+	private JTable table_2;
 	private Stack<Token> genereted_tokens;
 	/**
 	 * Launch the application.
@@ -116,9 +118,33 @@ public class MainWindow {
 		table_1.getColumnModel().getColumn(0).setResizable(false);
 		table_1.getColumnModel().getColumn(1).setResizable(false);
 		table_1.getColumnModel().getColumn(2).setResizable(false);
+		panel.setLayout(new BorderLayout(0, 0));
+		
+		table_2 = new JTable();
+		table_2.setModel(new DefaultTableModel(
+			new Object[][] {
+				
+			},
+			new String[] {
+				"Index", "Symbol"
+			}
+		) {
+			boolean[] columnEditables = new boolean[] {
+					false, false
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
+		table_2.getColumnModel().getColumn(0).setResizable(false);
+		table_2.getColumnModel().getColumn(1).setResizable(false);
+		panel.setLayout(new BorderLayout(0, 0));
 
 		JScrollPane scrollPane = new JScrollPane(table_1);
-		panel.add(scrollPane);
+		panel.add(scrollPane, BorderLayout.SOUTH);
+		
+		JScrollPane scrollPane2 = new JScrollPane(table_2);
+		panel.add(scrollPane2, BorderLayout.NORTH);
 		
 		JToolBar toolBar = new JToolBar();
 		toolBar.setFloatable(false);
@@ -196,6 +222,22 @@ public class MainWindow {
 						}
 					});
 				
+				table_2.setModel(new DefaultTableModel(
+						new Object[][] {
+							
+						},
+						new String[] {
+							"Index", "Symbol"
+						}
+					) {
+						boolean[] columnEditables = new boolean[] {
+								false, false
+						};
+						public boolean isCellEditable(int row, int column) {
+							return columnEditables[column];
+						}
+					});
+				
 				// TODO Auto-generated method stub
 				panel.setVisible(true);
 				String[] FullText = nr.pane.getText().split("\n");
@@ -223,11 +265,12 @@ public class MainWindow {
 						saved_stack.add(t);
 					}
 					
-					DefaultTableModel model = (DefaultTableModel) table_1.getModel();
+					
 					textPane.setText("Processo Lexico realizado com sucesso\nTotal de " + aux_stack.size() + " tokens.");
 					textPane.setForeground(Color.blue);
 					Font font = new Font("Serif", Font.BOLD, 20);
 					textPane.setFont(font);
+					DefaultTableModel model = (DefaultTableModel) table_1.getModel();
 					while(!aux_stack.empty()) {
 						Token aux = aux_stack.pop();
 						if(aux != null) {
@@ -237,7 +280,35 @@ public class MainWindow {
 						else {
 							System.out.println("ERRO");
 						}
-					}	
+					}
+					
+					SyntaticValidator sv = new SyntaticValidator(saved_stack);
+
+					new Thread() {
+						
+						public void run() {
+							while(!sv.getEnd()) {
+								try {
+									sv.doStep();
+									drawToken(sv.getTokens());
+									drawTerminal(sv.getTerminals());
+									Thread.sleep(10);
+								} catch (EditorException e) {
+									textPane.setText(e.getMessage());
+									textPane.setForeground(Color.red);
+									Font font = new Font("Serif", Font.BOLD, 20);
+									textPane.setFont(font);
+									
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								
+							}
+						}
+
+						
+					}.start();
 										
 				} catch (EditorException e) {
 					e.getLineNumber();
@@ -292,7 +363,65 @@ public class MainWindow {
         
         
     }
-	
+
+	private void drawTerminal(Stack<Token> terminals) {
+		
+		
+		table_2.setModel(new DefaultTableModel(
+				new Object[][] {
+					
+				},
+				new String[] {
+					"Index", "Symbol"
+				}
+			) {
+				boolean[] columnEditables = new boolean[] {
+						false, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+		DefaultTableModel model = (DefaultTableModel) table_2.getModel();
+		while(!terminals.empty()) {
+			Token aux = terminals.pop();
+			if(aux != null) {
+				model.addRow(new Object[]{aux.getIndex(), aux.getSymbol()});
+			}
+			else {
+				System.out.println("ERRO");
+			}
+		}
+	}
+
+	private void drawToken(Stack<Token> tokens) {
+		table_1.setModel(new DefaultTableModel(
+				new Object[][] {
+					
+				},
+				new String[] {
+					"Line","Index", "Symbol"
+				}
+			) {
+				boolean[] columnEditables = new boolean[] {
+					false, false, false
+				};
+				public boolean isCellEditable(int row, int column) {
+					return columnEditables[column];
+				}
+			});
+		DefaultTableModel model = (DefaultTableModel) table_1.getModel();
+		while(!tokens.empty()) {
+			Token aux = tokens.pop();
+			if(aux != null) {
+				model.addRow(new Object[]{aux.getLine(), aux.getIndex(), aux.getSymbol()});
+			}
+			else {
+				System.out.println("ERRO");
+			}
+		}
+		
+	}
 	public String getTextByFile(Path path) throws IOException {
 		
 		String fileText = new String(Files.readAllBytes(path)); 
