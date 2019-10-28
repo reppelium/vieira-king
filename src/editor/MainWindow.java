@@ -281,7 +281,6 @@ public class MainWindow {
 							System.out.println("ERRO");
 						}
 					}
-					
 					SyntaticValidator sv = new SyntaticValidator(saved_stack);
 
 					new Thread() {
@@ -292,13 +291,13 @@ public class MainWindow {
 									sv.doStep();
 									drawToken(sv.getTokens());
 									drawTerminal(sv.getTerminals());
-									Thread.sleep(10);
+									Thread.sleep(20);
 								} catch (EditorException e) {
 									textPane.setText(e.getMessage());
 									textPane.setForeground(Color.red);
 									Font font = new Font("Serif", Font.BOLD, 20);
 									textPane.setFont(font);
-									
+									break;
 								} catch (InterruptedException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();

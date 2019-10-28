@@ -40,6 +40,9 @@ public class SyntaticValidator {
 	}
 	
 	public void doStep() throws EditorException {
+		if(terminals.empty() || tokens.empty()) {
+			throw new EditorException("Syntatic", -1, "Elementos faltantes");
+		}
 		//x
 		Token top = terminals.peek();
 		// a
@@ -131,7 +134,7 @@ public class SyntaticValidator {
 		for(Integer i=0;i<terminals.size();i++) {
 			ans.add(terminals.get(i));
 		}
-		return terminals;
+		return ans;
 	}
 	
 	
