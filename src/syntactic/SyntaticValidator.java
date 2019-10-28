@@ -54,7 +54,7 @@ public class SyntaticValidator {
 				tokens.pop();
 			}
 			else {
-				throw new EditorException("Syntatic", nextInput.getLine(), "Os index nao sao iguais.");
+				throw new EditorException("Syntatic", nextInput.getLine(), "Os index nao sao iguais. Era esperado " + terminals.peek() + " obtivemos "+ tokens.peek());
 			}
 		}
 		else {
@@ -94,12 +94,13 @@ public class SyntaticValidator {
 
 	private List<String> foundUnion(Token tok, Token action) throws EditorException {
 		for (UnionTokenAction union : possiblesUnions) {
+			//use set
 			if(tok.getIndex() == union.getToken() && action.getIndex() == union.getAction()) {
 				return union.getResult();
 			}
 		}
 		
-		throw new EditorException("Syntatic", tok.getLine() , "Nao encontrou combinacao de Token e Acao");
+		throw new EditorException("Syntatic", tok.getLine() , "Nao encontrou combinacao de Token e Acao. Era esperado " + action.getSymbol()+ " obtivemos "+ tok.getSymbol());
 		
 	}
 	
@@ -119,8 +120,6 @@ public class SyntaticValidator {
 
 	public Stack<Token> getTokens() {
 		Stack<Token> ans = new Stack<Token>();
-		//isso aqui ta certo assim ou eu devo fazer ao contrario?
-		
 		for(Integer i=0;i<tokens.size();i++) {
 			ans.add(tokens.get(i));
 		}
@@ -132,7 +131,7 @@ public class SyntaticValidator {
 		for(Integer i=0;i<terminals.size();i++) {
 			ans.add(terminals.get(i));
 		}
-		return ans;
+		return terminals;
 	}
 	
 	
