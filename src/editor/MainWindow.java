@@ -22,6 +22,7 @@ import javax.swing.table.DefaultTableModel;
 import errors.EditorException;
 import lexicon.LexiconValidator;
 import model.Token;
+import semantic.SemanticValidator;
 import syntactic.SyntaticValidator;
 
 public class MainWindow {
@@ -286,6 +287,7 @@ public class MainWindow {
 					new Thread() {
 						
 						public void run() {
+							
 							while(!sv.getEnd()) {
 								try {
 									sv.doStep();
@@ -304,11 +306,18 @@ public class MainWindow {
 								}
 								
 							}
+							SemanticValidator seman = new SemanticValidator(saved_stack);
+							try {
+								seman.validate();
+							} catch (EditorException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 						}
 
 						
 					}.start();
-										
+					
 				} catch (EditorException e) {
 					e.getLineNumber();
 					textPane.setText(e.getMessage());

@@ -2,19 +2,18 @@ package semantic;
 
 public class Variable {
 	Integer pos;
-	Integer category;
+	String category;
 	String name;
 	String type;
 
-	public Variable(Integer pos, Integer category, String name, String type) {
+	public Variable(Integer pos, String category, String name) {
 		super();
 		this.pos = pos;
 		this.category = category;
 		this.name = name;
-		this.type = type;
 	}
 
-	public Integer getCategory() {
+	public String getCategory() {
 		return category;
 	}
 	
@@ -22,7 +21,7 @@ public class Variable {
 		return type;
 	}
 
-	public void setCategory(Integer category) {
+	public void setCategory(String category) {
 		this.category = category;
 	}
 
