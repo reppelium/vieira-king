@@ -78,7 +78,54 @@ public class SemanticValidator {
 					break;
 				//call
 				case 11:
-					//criar um Map<String,List<String>> onde tera o nome da funcao e a lista de parametros
+					// while encontrar um ; ele compara 1 a 1 as var encontrada com as que devem ser vindas
+					Boolean first = false;
+					String procedure = "";
+					List<Variable> procVars = new ArrayList<Variable>();
+					Integer j = 0;
+					while(local_token.getIndex() != 37) {
+						i++;
+						local_token = tokens.get(i);
+						
+						if(local_token.getIndex() == 25) {
+							if(!first) {
+								procedure = local_token.getSymbol();
+								procVars = functionParams.get(procedure);
+								first = true;
+							} else {
+								if(j == procVars.size() && j != 0) {
+									throw new EditorException("Semantico", local_token.getLine(), "Era esperado " + j + " argumentos e foram passados a mais");
+								}
+								Variable paramExpected = procVars.get(j);
+								Variable paramPassed = getVariable(local_token);
+								if(!paramPassed.getType().equals(paramExpected.getType())) {
+									throw new EditorException("Semantico", local_token.getLine(), "Era esperado variavel do tipo" + paramExpected.getType() + ", porem foi recebido o tipo" + paramPassed.getType());
+								}
+							}
+							
+						}
+						else if(local_token.getIndex() == 26) {
+							
+							Variable paramExpected = procVars.get(j);
+							if(!paramExpected.getType().equals("INTEGER")) {
+								throw new EditorException("Semantico", local_token.getLine(), "Era esperado variavel do tipo" + paramExpected.getType() + ", porem foi recebido o tipo INTEGER");
+							}
+						}
+						else if(local_token.getIndex() == 48) {
+							
+							Variable paramExpected = procVars.get(j);
+							if(!paramExpected.getType().equals("LITERAL")) {
+								throw new EditorException("Semantico", local_token.getLine(), "Era esperado variavel do tipo" + paramExpected.getType() + ", porem foi recebido o tipo INTEGER");
+							}
+						}
+						else if(local_token.getIndex() == 46) {
+							j++;
+						}
+					}
+					j++;
+					if(j != procVars.size()) {
+						throw new EditorException("Semantico", local_token.getLine(), "Era esperado " + procVars.size() + " argumentos e foram passados " + j);
+					}
 					break;
 				case 25:
 					//aqui ele ta chamando
@@ -100,6 +147,12 @@ public class SemanticValidator {
 								aux_var.setType("PROCEDURE");
 								insertVariable(aux_var, local_token);
 								category = "Parameter";
+								break;
+							}
+							else if(category.equals("Label")) {
+								Variable aux_var = new Variable(0, category, local_token.getSymbol());
+								aux_var.setType("Label");
+								insertVariable(aux_var, local_token);
 								break;
 							}
 						}
