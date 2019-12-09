@@ -259,11 +259,13 @@ public class MainWindow {
 					genereted_tokens = lv.validate(lines);
 					Stack<Token> aux_stack = new Stack<Token>();
 					Stack<Token> saved_stack = new Stack<Token>();
+					Stack<Token> saved_stack2 = new Stack<Token>();
 					
 					while(!genereted_tokens.empty()) {
 						Token t = genereted_tokens.pop();
 						aux_stack.add(t);
 						saved_stack.add(t);
+						saved_stack2.add(0, t);
 					}
 					
 					
@@ -306,7 +308,8 @@ public class MainWindow {
 								}
 								
 							}
-							SemanticValidator seman = new SemanticValidator(saved_stack);
+							
+							SemanticValidator seman = new SemanticValidator(saved_stack2);
 							try {
 								seman.validate();
 							} catch (EditorException e) {
