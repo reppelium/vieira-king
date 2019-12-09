@@ -168,10 +168,6 @@ public class SemanticValidator {
 						insertVariable(local_var, local_token);
 					}
 					break;
-				//caso := //atribuicao em uma variavel, validar se o tipo é conveniente
-				case 38:
-					
-					break;
 				//literal
 				case 48:
 					while(!memo.empty()) {
